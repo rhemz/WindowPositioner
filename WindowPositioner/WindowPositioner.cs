@@ -26,6 +26,7 @@ namespace WindowPositioner
         private SaveManager saveManager;
         private HwndObject handle;
         private HwndRefreshTimer refreshTimer;
+        private KeyHook hook;
 
         #region constructor
         public WindowPositioner()
@@ -48,6 +49,10 @@ namespace WindowPositioner
             refreshTimer = new HwndRefreshTimer(this);
             refreshTimer.hwndRefresh += new HwndRefreshTimer.hwndRefreshHandler(RefreshHwndAutocomplete);
             refreshTimer.Go();
+
+            hook = new KeyHook();
+            hook.KeyboardHook();
+            hook.KeyPressDetected += KeyHookPressDetected;
 
 
             #region tooltips
@@ -414,7 +419,19 @@ namespace WindowPositioner
             MessageBox.Show("-rhemz", "Author");
         }
 
-        #endregion       
+        #endregion
+
+
+        #region keyhooks
+        public void KeyHookPressDetected(object sender, KeyEventArgs e)
+        {
+            if(e.Control && e.Shift && e.Alt && e.KeyCode == Keys.F9)
+            {
+                MoveLayoutWindows(container.Collections[layoutsComboBox.SelectedIndex]);
+            }
+
+        }
+        #endregion
 
     }
 }
